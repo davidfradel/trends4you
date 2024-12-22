@@ -17,7 +17,7 @@ const pool = new Pool({
 
 export const query = async <T extends Record<string, unknown>>(
   text: string,
-  params?: (string | number | boolean | null)[]
+  params?: (string | number | boolean | null | undefined)[]
 ): Promise<QueryResult<T>> => {
   const start = Date.now();
   const res = await pool.query<T>(text, params);
