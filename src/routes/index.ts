@@ -72,19 +72,6 @@ router.get("/trends", async (_req, res) => {
   }
 });
 
-// Get trends by category
-router.get("/trends/:category", async (req, res) => {
-  const { category } = req.params;
-
-  try {
-    const trends = await getTrendsByCategory(category);
-    res.status(200).json(trends);
-  } catch (error) {
-    console.error("Error fetching trends by category:", error);
-    res.status(500).json({ error: "Failed to fetch trends" });
-  }
-});
-
 // Search trends by keyword
 router.get("/trends/search/:keyword", async (req, res) => {
   const { keyword } = req.params;
@@ -171,8 +158,13 @@ router.get("/trends/popular", async (req, res) => {
 });
 
 // Get trend by ID
-router.get("/trends/:id", async (req, res) => {
+router.get("/trends/:id", async (req, res, next) => {
   const { id } = req.params;
+
+  // Check if ID is a positive integer
+  if (!/^\d+$/.test(id)) {
+    return next(); // Pass to next route handler
+  }
 
   try {
     const trend = await getTrendById(parseInt(id, 10));
@@ -184,6 +176,19 @@ router.get("/trends/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching trend by ID:", error);
     res.status(500).json({ error: "Failed to fetch trend" });
+  }
+});
+
+// Get trends by category
+router.get("/trends/:category", async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const trends = await getTrendsByCategory(category);
+    res.status(200).json(trends);
+  } catch (error) {
+    console.error("Error fetching trends by category:", error);
+    res.status(500).json({ error: "Failed to fetch trends" });
   }
 });
 
